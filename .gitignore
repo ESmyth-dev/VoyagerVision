@@ -86,6 +86,8 @@ celerybeat-schedule
 .venv
 # env/
 venv/
+venv-fastapi/
+venv-langchain/
 # ENV/
 env.bak/
 venv.bak/
