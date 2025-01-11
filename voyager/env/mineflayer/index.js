@@ -15,7 +15,18 @@ const OnSave = require("./lib/observation/onSave");
 const Chests = require("./lib/observation/chests");
 const { plugin: tool } = require("mineflayer-tool");
 
+const { Viewer, WorldView, getBufferFromStream } = require('prismarine-viewer').viewer
+global.Worker = require('worker_threads').Worker
+const THREE = require('three')
+const { createCanvas } = require('node-canvas-webgl/lib')
+const fsp = require('fs').promises
+const { Vec3 } = require('vec3')
+const { EventEmitter } = require('events')
+
+
 let bot = null;
+
+let counter = 0;
 
 const app = express();
 
@@ -32,6 +43,7 @@ app.post("/start", (req, res) => {
         username: "bot",
         disableChatSigning: true,
         checkTimeoutInterval: 60 * 60 * 1000,
+        version: "1.19"
     });
     bot.once("error", onConnectionFailed);
 
@@ -49,7 +61,10 @@ app.post("/start", (req, res) => {
         bot.dismount();
     });
 
+
     bot.once("spawn", async () => {
+        await bot.waitForChunksToLoad()
+
         bot.removeListener("error", onConnectionFailed);
         let itemTicks = 1;
         if (req.body.reset === "hard") {
@@ -246,7 +261,22 @@ app.post("/step", async (req, res) => {
     await bot.waitForTicks(bot.waitTicks);
     if (!response_sent) {
         response_sent = true;
-        res.json(bot.observe());
+        curr_observation = bot.observe();
+        const camera = new Camera(bot)
+        camera.on('ready', async () => {
+            const yaw = bot.entity.yaw; // Horizontal rotation (radians)
+            const pitch = bot.entity.pitch; // Vertical rotation (radians)
+
+            // Convert bot's rotation to camera coordinates
+            const lookDirection = new THREE.Vector3(
+                -Math.cos(pitch) * Math.sin(yaw), // Flip X
+                   -Math.sin(pitch),                // Y stays flipped (Minecraft uses positive downward)
+                -Math.cos(pitch) * Math.cos(yaw) // Flip Z
+            );
+            counter += 1
+        await camera.takePicture(lookDirection, `screenshot${counter}`)
+  })
+        res.json(curr_observation);
     }
     bot.removeListener("physicTick", onTick);
 
@@ -423,3 +453,59 @@ const PORT = process.argv[2] || DEFAULT_PORT;
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
+
+class Camera extends EventEmitter {
+  constructor (bot) {
+    super()
+    this.bot = bot
+    this.viewDistance = 4
+    this.width = 512
+    this.height = 512
+    this.canvas = createCanvas(this.width, this.height)
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas })
+    this.viewer = new Viewer(this.renderer)
+    this._init().then(() => {
+      this.emit('ready')
+    })
+  }
+
+  async _init () {
+    const botPos = this.bot.entity.position
+    const center = new Vec3(botPos.x, botPos.y + 1.62, botPos.z)
+    this.viewer.setVersion(this.bot.version)
+
+    // Load world
+    const worldView = new WorldView(this.bot.world, this.viewDistance, center)
+    this.viewer.listen(worldView)
+
+    this.viewer.camera.position.set(center.x, center.y, center.z)
+
+    await worldView.init(center)
+  }
+
+  async takePicture (direction, name) {
+    const cameraPos = new Vec3(this.viewer.camera.position.x, this.viewer.camera.position.y, this.viewer.camera.position.z)
+    const point = cameraPos.add(direction)
+    this.viewer.camera.lookAt(point.x, point.y, point.z)
+    console.info('Waiting for world to load')
+    await new Promise(resolve => setTimeout(resolve, 5000))
+    this.renderer.render(this.viewer.scene, this.viewer.camera)
+
+    const imageStream = this.canvas.createJPEGStream({
+      bufsize: 4096,
+      quality: 100,
+      progressive: false
+    })
+    const buf = await getBufferFromStream(imageStream)
+    let stats
+    try {
+      stats = await fsp.stat('./screenshots')
+    } catch (e) {
+      if (!stats?.isDirectory()) {
+        await fsp.mkdir('./screenshots')
+      }
+    }
+    await fsp.writeFile(`screenshots/${name}.jpg`, buf)
+    console.log('saved', name)
+  }
+}

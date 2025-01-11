@@ -407,7 +407,6 @@ class CurriculumAgent:
                 texts=[question],
             )
             U.dump_json(self.qa_cache, f"{self.ckpt_dir}/curriculum/qa_cache.json")
-            self.qa_cache_questions_vectordb.persist()
             questions.append(question)
             answers.append(answer)
         assert len(questions_new) == len(questions) == len(answers)
@@ -428,7 +427,6 @@ class CurriculumAgent:
                 texts=[question],
             )
             U.dump_json(self.qa_cache, f"{self.ckpt_dir}/curriculum/qa_cache.json")
-            self.qa_cache_questions_vectordb.persist()
         context = f"Question: {question}\n{answer}"
         return context
 

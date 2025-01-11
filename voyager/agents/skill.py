@@ -97,7 +97,6 @@ class SkillManager:
             f"{self.ckpt_dir}/skill/description/{dumped_program_name}.txt",
         )
         U.dump_json(self.skills, f"{self.ckpt_dir}/skill/skills.json")
-        self.vectordb.persist()
 
     def generate_skill_description(self, program_name, program_code):
         messages = [
