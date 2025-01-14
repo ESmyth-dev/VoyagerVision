@@ -26,7 +26,6 @@ const { EventEmitter } = require('events')
 
 let bot = null;
 
-let counter = 0;
 
 const app = express();
 
@@ -261,7 +260,7 @@ app.post("/step", async (req, res) => {
     await bot.waitForTicks(bot.waitTicks);
     if (!response_sent) {
         response_sent = true;
-        curr_observation = bot.observe();
+        let curr_observation = bot.observe();
         const camera = new Camera(bot)
         camera.on('ready', async () => {
             const yaw = bot.entity.yaw; // Horizontal rotation (radians)
@@ -273,10 +272,22 @@ app.post("/step", async (req, res) => {
                    -Math.sin(pitch),                // Y stays flipped (Minecraft uses positive downward)
                 -Math.cos(pitch) * Math.cos(yaw) // Flip Z
             );
-            counter += 1
-        await camera.takePicture(lookDirection, `screenshot${counter}`)
+        await camera.takePicture(lookDirection, `bot_pov`)
+
+            const imageBuffer = fs.readFileSync("./screenshots/bot_pov.jpg");
+        const imageBase64 = imageBuffer.toString('base64');
+        fs.unlinkSync("./screenshots/bot_pov.jpg")
+
+        let json_observation = JSON.parse(curr_observation);
+
+            json_observation[0][1]["image"] = imageBase64;
+
+
+        const new_observation = JSON.stringify(json_observation);
+
+
+        res.json(new_observation);
   })
-        res.json(curr_observation);
     }
     bot.removeListener("physicTick", onTick);
 

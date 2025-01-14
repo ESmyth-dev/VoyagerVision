@@ -6,8 +6,9 @@ load_dotenv()
 # You can also use mc_port instead of azure_login, but azure_login is highly recommended
 openai_api_key = os.getenv('openai_api_key')
 voyager = Voyager(
-    mc_port=53669,
+    mc_port=63213,
     openai_api_key=openai_api_key,
+    resume=True
 )
 
 # start lifelong learning

@@ -125,6 +125,7 @@ class ActionAgent:
                 equipment = event["status"]["equipment"]
                 inventory_used = event["status"]["inventoryUsed"]
                 inventory = event["inventory"]
+                image_base64 = event["image"]
                 assert i == len(events) - 1, "observe must be the last event"
 
         observation = ""
