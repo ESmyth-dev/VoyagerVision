@@ -1,12 +1,13 @@
 import re
 import time
+import os
 
 import voyager.utils as U
 from javascript import require
 from langchain_openai import ChatOpenAI
 from langchain.prompts import SystemMessagePromptTemplate
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
-
+from openai import OpenAI
 from voyager.prompts import load_prompt
 from voyager.control_primitives_context import load_control_primitives_context
 
@@ -35,6 +36,11 @@ class ActionAgent:
             model_name=model_name,
             temperature=temperature,
             request_timeout=request_timout,
+        )
+
+        self.llm2 = OpenAI(
+            api_key=os.getenv('openai_api_key'),
+
         )
 
     def update_chest_memory(self, chests):
@@ -100,7 +106,7 @@ class ActionAgent:
         return system_message
 
     def render_human_message(
-        self, *, events, code="", task="", context="", critique=""
+        self, *, events, code="", task="", context="", critique="", image_base64_in=""
     ):
         chat_messages = []
         error_messages = []
@@ -125,7 +131,14 @@ class ActionAgent:
                 equipment = event["status"]["equipment"]
                 inventory_used = event["status"]["inventoryUsed"]
                 inventory = event["inventory"]
-                image_base64 = event["image"]
+                if image_base64_in:
+                    image_base64 = image_base64_in
+                else:
+                    image_base64 = event["image"]
+                    continue
+
+
+
                 assert i == len(events) - 1, "observe must be the last event"
 
         observation = ""
@@ -197,10 +210,10 @@ class ActionAgent:
         else:
             observation += f"Critique: None\n\n"
 
-        return HumanMessage(content=observation)
+        return HumanMessage(content=observation), image_base64
 
     def process_ai_message(self, message):
-        assert isinstance(message, AIMessage)
+        #assert isinstance(message, AIMessage)
 
         retry = 3
         error = None

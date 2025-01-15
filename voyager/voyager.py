@@ -15,41 +15,42 @@ from .agents import SkillManager
 model = "gpt-4o-2024-08-06"
 model2 = "gpt-4o-mini"
 
+
 # TODO: remove event memory
 class Voyager:
     def __init__(
-        self,
-        mc_port: int = None,
-        azure_login: Dict[str, str] = None,
-        server_port: int = 3000,
-        openai_api_key: str = None,
-        env_wait_ticks: int = 20,
-        env_request_timeout: int = 600,
-        max_iterations: int = 160,
-        reset_placed_if_failed: bool = False,
-        action_agent_model_name: str = model,
-        action_agent_temperature: float = 0,
-        action_agent_task_max_retries: int = 4,
-        action_agent_show_chat_log: bool = True,
-        action_agent_show_execution_error: bool = True,
-        curriculum_agent_model_name: str = model,
-        curriculum_agent_temperature: float = 0,
-        curriculum_agent_qa_model_name: str = model2,
-        curriculum_agent_qa_temperature: float = 0,
-        curriculum_agent_warm_up: Dict[str, int] = None,
-        curriculum_agent_core_inventory_items: str = r".*_log|.*_planks|stick|crafting_table|furnace"
-        r"|cobblestone|dirt|coal|.*_pickaxe|.*_sword|.*_axe",
-        curriculum_agent_mode: str = "auto",
-        critic_agent_model_name: str = model,
-        critic_agent_temperature: float = 0,
-        critic_agent_mode: str = "auto",
-        skill_manager_model_name: str = model2,
-        skill_manager_temperature: float = 0,
-        skill_manager_retrieval_top_k: int = 2,
-        openai_api_request_timeout: int = 240,
-        ckpt_dir: str = "ckpt",
-        skill_library_dir: str = None,
-        resume: bool = False,
+            self,
+            mc_port: int = None,
+            azure_login: Dict[str, str] = None,
+            server_port: int = 3000,
+            openai_api_key: str = None,
+            env_wait_ticks: int = 20,
+            env_request_timeout: int = 600,
+            max_iterations: int = 160,
+            reset_placed_if_failed: bool = False,
+            action_agent_model_name: str = model2,
+            action_agent_temperature: float = 0,
+            action_agent_task_max_retries: int = 4,
+            action_agent_show_chat_log: bool = True,
+            action_agent_show_execution_error: bool = True,
+            curriculum_agent_model_name: str = model2,
+            curriculum_agent_temperature: float = 0,
+            curriculum_agent_qa_model_name: str = model2,
+            curriculum_agent_qa_temperature: float = 0,
+            curriculum_agent_warm_up: Dict[str, int] = None,
+            curriculum_agent_core_inventory_items: str = r".*_log|.*_planks|stick|crafting_table|furnace"
+                                                         r"|cobblestone|dirt|coal|.*_pickaxe|.*_sword|.*_axe",
+            curriculum_agent_mode: str = "auto",
+            critic_agent_model_name: str = model2,
+            critic_agent_temperature: float = 0,
+            critic_agent_mode: str = "auto",
+            skill_manager_model_name: str = model2,
+            skill_manager_temperature: float = 0,
+            skill_manager_retrieval_top_k: int = 2,
+            openai_api_request_timeout: int = 240,
+            ckpt_dir: str = "ckpt",
+            skill_library_dir: str = None,
+            resume: bool = False,
     ):
         """
         The main class for Voyager.
@@ -163,6 +164,7 @@ class Voyager:
         self.messages = None
         self.conversations = []
         self.last_events = None
+        self.image_base64 = ""
 
     def reset(self, task, context="", reset_env=True):
         self.action_agent_rollout_num_iter = 0
@@ -188,8 +190,8 @@ class Voyager:
             f"\033[33mRender Action Agent system message with {len(skills)} skills\033[0m"
         )
         system_message = self.action_agent.render_system_message(skills=skills)
-        human_message = self.action_agent.render_human_message(
-            events=events, code="", task=self.task, context=context, critique=""
+        human_message, self.image_base64 = self.action_agent.render_human_message(
+            events=events, code="", task=self.task, context=context, critique="", image_base64_in=""
         )
         self.messages = [system_message, human_message]
         print(
@@ -205,7 +207,28 @@ class Voyager:
     def step(self):
         if self.action_agent_rollout_num_iter < 0:
             raise ValueError("Agent must be reset before stepping")
-        ai_message = self.action_agent.llm(self.messages)
+        #ai_message = self.action_agent.llm(self.messages)
+        response = self.action_agent.llm2.chat.completions.create(
+            model=model2,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": self.messages[0].content + "\n" + self.messages[1].content
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": f"data:image/jpeg;base64,{self.image_base64}"},
+                        },
+                    ],
+                }
+            ],
+        )
+        ai_message = response.choices[0].message
+        print(f"THIS IS self.messages: {self.messages}")
+        print(f"THIS IS ai_message: {ai_message}")
         print(f"\033[34m****Action Agent ai message****\n{ai_message.content}\033[0m")
         self.conversations.append(
             (self.messages[0].content, self.messages[1].content, ai_message.content)
@@ -246,17 +269,20 @@ class Voyager:
                 events[-1][1]["voxels"] = new_events[-1][1]["voxels"]
             new_skills = self.skill_manager.retrieve_skills(
                 query=self.context
-                + "\n\n"
-                + self.action_agent.summarize_chatlog(events)
+                      + "\n\n"
+                      + self.action_agent.summarize_chatlog(events)
             )
             system_message = self.action_agent.render_system_message(skills=new_skills)
-            human_message = self.action_agent.render_human_message(
+            human_message, self.image_base64 = self.action_agent.render_human_message(
                 events=events,
                 code=parsed_result["program_code"],
                 task=self.task,
                 context=self.context,
                 critique=critique,
+                image_base64_in=self.image_base64
+
             )
+            self.image_base64 = self.image_base64
             self.last_events = copy.deepcopy(events)
             self.messages = [system_message, human_message]
         else:
@@ -266,8 +292,8 @@ class Voyager:
         assert len(self.messages) == 2
         self.action_agent_rollout_num_iter += 1
         done = (
-            self.action_agent_rollout_num_iter >= self.action_agent_task_max_retries
-            or success
+                self.action_agent_rollout_num_iter >= self.action_agent_task_max_retries
+                or success
         )
         info = {
             "task": self.task,
@@ -276,7 +302,7 @@ class Voyager:
         }
         if success:
             assert (
-                "program_code" in parsed_result and "program_name" in parsed_result
+                    "program_code" in parsed_result and "program_name" in parsed_result
             ), "program and program_name must be returned when success"
             info["program_code"] = parsed_result["program_code"]
             info["program_name"] = parsed_result["program_name"]
