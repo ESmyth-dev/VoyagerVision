@@ -11,7 +11,6 @@ from openai import OpenAI
 from voyager.prompts import load_prompt
 from voyager.control_primitives_context import load_control_primitives_context
 
-
 class ActionAgent:
     def __init__(
         self,
@@ -32,16 +31,21 @@ class ActionAgent:
             self.chest_memory = U.load_json(f"{ckpt_dir}/action/chest_memory.json")
         else:
             self.chest_memory = {}
-        self.llm = ChatOpenAI(
-            model_name=model_name,
-            temperature=temperature,
-            request_timeout=request_timout,
-        )
+        if model_name == "llama3.2-vision":
+            pass
+        else:
+            # self.llm = ChatOpenAI(
+            #     model_name=model_name,
+            #     temperature=temperature,
+            #     request_timeout=request_timout,
+            # )
 
-        self.llm2 = OpenAI(
-            api_key=os.getenv('openai_api_key'),
+            self.llm2 = OpenAI(
+                api_key=os.getenv('openai_api_key'),
 
-        )
+            )
+
+        self.llm2_temp = temperature
 
     def update_chest_memory(self, chests):
         for position, chest in chests.items():

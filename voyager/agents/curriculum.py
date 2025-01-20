@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 import re
+import os
 
 import voyager.utils as U
 from voyager.prompts import load_prompt
@@ -10,6 +11,8 @@ from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
 from langchain.schema import HumanMessage, SystemMessage
 from langchain_chroma import Chroma
+
+from openai import OpenAI
 
 class CurriculumAgent:
     def __init__(
@@ -30,11 +33,23 @@ class CurriculumAgent:
             temperature=temperature,
             request_timeout=request_timout,
         )
+        self.llm2 = OpenAI(
+            api_key=os.getenv('openai_api_key'),
+
+        )
         self.qa_llm = ChatOpenAI(
             model_name=qa_model_name,
             temperature=qa_temperature,
             request_timeout=request_timout,
         )
+
+        self.qa_llm2 = OpenAI(
+            api_key=os.getenv('openai_api_key'),
+
+        )
+
+        self.image_base64 =""
+
         assert mode in [
             "auto",
             "manual",
@@ -149,6 +164,7 @@ class CurriculumAgent:
         equipment = event["status"]["equipment"]
         inventory_used = event["status"]["inventoryUsed"]
         inventory = event["inventory"]
+        self.image_base64 = event["image"]
 
         if not any(
             "dirt" in block
@@ -376,7 +392,33 @@ class CurriculumAgent:
         print(
             f"\033[31m****Curriculum Agent task decomposition****\nFinal task: {task}\033[0m"
         )
-        response = self.llm(messages).content
+        #response = self.llm(messages).content
+
+        response = self.llm2.chat.completions.create(
+            model=self.llm.model_name,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": messages[0].content
+                        },
+                        {
+                            "type": "text",
+                            "text": messages[1].content
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": f"data:image/jpeg;base64,{self.image_base64}"},
+                        },
+                    ],
+                }
+            ],
+            temperature=self.llm.temperature
+        )
+
+
         print(f"\033[31m****Curriculum Agent task decomposition****\n{response}\033[0m")
         return fix_and_parse_json(response)
 
@@ -456,7 +498,33 @@ class CurriculumAgent:
                 events=events, chest_observation=chest_observation
             ),
         ]
-        qa_response = self.qa_llm(messages).content
+        #qa_response = self.qa_llm(messages).content
+
+        qa_response = self.qa_llm2.chat.completions.create(
+            model=self.qa_llm.model_name,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": messages[0].content
+                        },
+                        {
+                            "type": "text",
+                            "text": messages[1].content
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": f"data:image/jpeg;base64,{self.image_base64}"},
+                        },
+                    ],
+                }
+            ],
+            temperature=self.qa_llm.temperature
+        )
+
+
         try:
             # Regex pattern to extract question and concept pairs
             pattern = r"Question \d+: (.+)\nConcept \d+: (.+)"
@@ -490,6 +558,30 @@ class CurriculumAgent:
             self.render_human_message_qa_step2_answer_questions(question=question),
         ]
         print(f"\033[35mCurriculum Agent Question: {question}\033[0m")
-        qa_answer = self.qa_llm(messages).content
+        #qa_answer = self.qa_llm(messages).content
+
+        qa_answer = self.qa_llm2.chat.completions.create(
+            model=self.qa_llm.model_name,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": messages[0].content
+                        },
+                        {
+                            "type": "text",
+                            "text": messages[1].content
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": f"data:image/jpeg;base64,{self.image_base64}"},
+                        },
+                    ],
+                }
+            ],
+            temperature=self.qa_llm.temperature
+        )
         print(f"\033[31mCurriculum Agent {qa_answer}\033[0m")
         return qa_answer
