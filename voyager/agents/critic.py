@@ -2,7 +2,9 @@ from voyager.prompts import load_prompt
 from voyager.utils.json_utils import fix_and_parse_json
 from langchain_openai import ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
+from openai import OpenAI
 
+import os
 
 class CriticAgent:
     def __init__(
@@ -17,8 +19,13 @@ class CriticAgent:
             temperature=temperature,
             request_timeout=request_timout,
         )
+
+        self.llm2 = OpenAI(
+            api_key=os.getenv('openai_api_key'),
+        )
         assert mode in ["auto", "manual"]
         self.mode = mode
+        self.image_base64 = ""
 
     def render_system_message(self):
         system_message = SystemMessage(content=load_prompt("critic"))
@@ -35,6 +42,7 @@ class CriticAgent:
         equipment = events[-1][1]["status"]["equipment"]
         inventory_used = events[-1][1]["status"]["inventoryUsed"]
         inventory = events[-1][1]["inventory"]
+        self.image_base64 = events[-1][1]["image"]
 
         for i, (event_type, event) in enumerate(events):
             if event_type == "onError":
@@ -98,7 +106,35 @@ class CriticAgent:
         if messages[1] is None:
             return False, ""
 
-        critic = self.llm(messages).content
+        #critic = self.llm(messages).content
+
+        crit = self.llm2.chat.completions.create(
+            model=self.llm.model_name,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": messages[0].content
+                        },
+                        {
+                            "type": "text",
+                            "text": messages[1].content
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": f"data:image/jpeg;base64,{self.image_base64}"},
+                        },
+                    ],
+                }
+            ],
+            temperature=self.llm.temperature
+        )
+
+        critic = crit.choices[0].message.content
+
+
         print(f"\033[31m****Critic Agent ai message****\n{critic}\033[0m")
         try:
             response = fix_and_parse_json(critic)

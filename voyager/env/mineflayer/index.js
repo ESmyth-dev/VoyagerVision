@@ -141,7 +141,34 @@ app.post("/start", (req, res) => {
         }
 
         await bot.waitForTicks(bot.waitTicks * itemTicks);
-        res.json(bot.observe());
+        let curr_observation = bot.observe();
+        const camera = new Camera(bot)
+        camera.on('ready', async () => {
+            const yaw = bot.entity.yaw; // Horizontal rotation (radians)
+            const pitch = bot.entity.pitch; // Vertical rotation (radians)
+
+            // Convert bot's rotation to camera coordinates
+            const lookDirection = new THREE.Vector3(
+                -Math.cos(pitch) * Math.sin(yaw), // Flip X
+                   -Math.sin(pitch),                // Y stays flipped (Minecraft uses positive downward)
+                -Math.cos(pitch) * Math.cos(yaw) // Flip Z
+            );
+        await camera.takePicture(lookDirection, `bot_pov`)
+
+            const imageBuffer = fs.readFileSync("./screenshots/bot_pov.jpg");
+        const imageBase64 = imageBuffer.toString('base64');
+        fs.unlinkSync("./screenshots/bot_pov.jpg")
+
+        let json_observation = JSON.parse(curr_observation);
+
+            json_observation[0][1]["image"] = imageBase64;
+
+
+        const new_observation = JSON.stringify(json_observation);
+
+
+        res.json(new_observation);
+  })
 
         initCounter(bot);
         bot.chat("/gamerule keepInventory true");
@@ -172,7 +199,39 @@ app.post("/step", async (req, res) => {
         bot.waitForTicks(bot.waitTicks).then(() => {
             if (!response_sent) {
                 response_sent = true;
-                res.json(bot.observe());
+                let curr_observation = bot.observe();
+        const camera = new Camera(bot)
+        camera.on('ready', async () => {
+            const yaw = bot.entity.yaw; // Horizontal rotation (radians)
+            const pitch = bot.entity.pitch; // Vertical rotation (radians)
+
+            // Convert bot's rotation to camera coordinates
+            const lookDirection = new THREE.Vector3(
+                -Math.cos(pitch) * Math.sin(yaw), // Flip X
+                   -Math.sin(pitch),                // Y stays flipped (Minecraft uses positive downward)
+                -Math.cos(pitch) * Math.cos(yaw) // Flip Z
+            );
+        await camera.takePicture(lookDirection, `bot_pov`)
+
+            const imageBuffer = fs.readFileSync("./screenshots/bot_pov.jpg");
+        const imageBase64 = imageBuffer.toString('base64');
+        fs.unlinkSync("./screenshots/bot_pov.jpg")
+
+
+
+        let json_observation = JSON.parse(curr_observation);
+        for (let i = 0; i < json_observation.length; i++) {
+                if (json_observation[i][0] === "observe"){
+                    json_observation[i][1]["image"] = imageBase64;
+                    console.log("inserting image!")
+                }
+            }
+
+
+        const new_observation = JSON.stringify(json_observation);
+
+        res.json(new_observation);
+  })
             }
         });
     }
@@ -278,13 +337,17 @@ app.post("/step", async (req, res) => {
         const imageBase64 = imageBuffer.toString('base64');
         fs.unlinkSync("./screenshots/bot_pov.jpg")
 
-        let json_observation = JSON.parse(curr_observation);
 
-            json_observation[0][1]["image"] = imageBase64;
+        let json_observation = JSON.parse(curr_observation);
+            for (let i = 0; i < json_observation.length; i++) {
+                if (json_observation[i][0] === "observe"){
+                    json_observation[i][1]["image"] = imageBase64;
+                    console.log("inserting image!")
+                }
+            }
 
 
         const new_observation = JSON.stringify(json_observation);
-
 
         res.json(new_observation);
   })

@@ -12,6 +12,9 @@ from .agents import CriticAgent
 from .agents import CurriculumAgent
 from .agents import SkillManager
 
+from ollama import chat
+
+
 model = "gpt-4o"
 model2 = "gpt-4o-mini"
 model3 = "llama3.2-vision"
@@ -114,6 +117,7 @@ class Voyager:
         self.env_wait_ticks = env_wait_ticks
         self.reset_placed_if_failed = reset_placed_if_failed
         self.max_iterations = max_iterations
+        self.action_agent_model_name = action_agent_model_name
 
         # set openai api key
         os.environ["OPENAI_API_KEY"] = openai_api_key
@@ -192,7 +196,7 @@ class Voyager:
         )
         system_message = self.action_agent.render_system_message(skills=skills)
         human_message, self.image_base64 = self.action_agent.render_human_message(
-            events=events, code="", task=self.task, context=context, critique="", image_base64_in=""
+            events=events, code="", task=self.task, context=context, critique=""
         )
         self.messages = [system_message, human_message]
         print(
@@ -209,31 +213,52 @@ class Voyager:
         if self.action_agent_rollout_num_iter < 0:
             raise ValueError("Agent must be reset before stepping")
         #ai_message = self.action_agent.llm(self.messages)
-        response = self.action_agent.llm2.chat.completions.create(
-            model=model,
-            messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": self.messages[0].content
-                        },
-                        {
-                            "type": "text",
-                            "text": self.messages[1].content
-                        },
-                        {
-                            "type": "image_url",
-                            "image_url": {"url": f"data:image/jpeg;base64,{self.image_base64}"},
-                        },
-                    ],
-                }
-            ],
-            temperature=self.action_agent.llm2_temp
-        )
-        ai_message = response.choices[0].message
-        print(ai_message)
+
+        if self.action_agent_model_name == model3:
+            response = chat(
+                model=model3,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": f"{self.messages[0].content}",
+                    },
+                    {
+                        "role": "user",
+                        "content": f"{self.messages[1].content}",
+                        "images": [self.image_base64],
+                    },
+
+
+                ],
+            )
+            ai_message = response.message
+
+        else:
+            response = self.action_agent.llm2.chat.completions.create(
+                model=model,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": self.messages[0].content
+                            },
+                            {
+                                "type": "text",
+                                "text": self.messages[1].content
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {"url": f"data:image/jpeg;base64,{self.image_base64}"},
+                            },
+                        ],
+                    }
+                ],
+                temperature=self.action_agent.llm2_temp
+            )
+            ai_message = response.choices[0].message
+
         print(f"\033[34m****Action Agent ai message****\n{ai_message.content}\033[0m")
         self.conversations.append(
             (self.messages[0].content, self.messages[1].content, ai_message.content)
@@ -278,16 +303,15 @@ class Voyager:
                       + self.action_agent.summarize_chatlog(events)
             )
             system_message = self.action_agent.render_system_message(skills=new_skills)
+            events = self.env.step("")
             human_message, self.image_base64 = self.action_agent.render_human_message(
                 events=events,
                 code=parsed_result["program_code"],
                 task=self.task,
                 context=self.context,
                 critique=critique,
-                image_base64_in=self.image_base64
 
             )
-            self.image_base64 = self.image_base64
             self.last_events = copy.deepcopy(events)
             self.messages = [system_message, human_message]
         else:

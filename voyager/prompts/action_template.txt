@@ -47,3 +47,6 @@ Code:
 You should only respond in the format as described below:
 RESPONSE FORMAT:
 {response_format}
+
+Additionally, if for any reason you are not able to assist with a request you must explicitly detail the exact reason for this in your response.
+Also, use the screenshots I send to help you, they will be crucial for building tasks.

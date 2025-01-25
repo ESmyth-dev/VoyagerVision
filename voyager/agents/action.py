@@ -93,8 +93,7 @@ class ActionAgent:
             "smeltItem",
             "killMob",
         ]
-        if not self.llm.model_name == "gpt-3.5-turbo":
-            base_skills += [
+        base_skills += [
                 "useChest",
                 "mineflayer",
             ]
@@ -110,7 +109,7 @@ class ActionAgent:
         return system_message
 
     def render_human_message(
-        self, *, events, code="", task="", context="", critique="", image_base64_in=""
+        self, *, events, code="", task="", context="", critique=""
     ):
         chat_messages = []
         error_messages = []
@@ -135,11 +134,8 @@ class ActionAgent:
                 equipment = event["status"]["equipment"]
                 inventory_used = event["status"]["inventoryUsed"]
                 inventory = event["inventory"]
-                if image_base64_in:
-                    image_base64 = image_base64_in
-                else:
-                    image_base64 = event["image"]
-                    continue
+                image_base64 = event["image"]
+
 
 
 

@@ -17,9 +17,9 @@ from openai import OpenAI
 class CurriculumAgent:
     def __init__(
         self,
-        model_name="gpt-3.5-turbo",
+        model_name="gpt-4o",
         temperature=0,
-        qa_model_name="gpt-3.5-turbo",
+        qa_model_name="gpt-4o",
         qa_temperature=0,
         request_timout=120,
         ckpt_dir="ckpt",
@@ -48,7 +48,7 @@ class CurriculumAgent:
 
         )
 
-        self.image_base64 =""
+        self.image_base64 = ""
 
         assert mode in [
             "auto",
@@ -307,7 +307,31 @@ class CurriculumAgent:
     def propose_next_ai_task(self, *, messages, max_retries=5):
         if max_retries == 0:
             raise RuntimeError("Max retries reached, failed to propose ai task.")
-        curriculum = self.llm(messages).content
+        curr = self.llm2.chat.completions.create(
+            model=self.llm.model_name,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": messages[0].content
+                        },
+                        {
+                            "type": "text",
+                            "text": messages[1].content
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": f"data:image/jpeg;base64,{self.image_base64}"},
+                        },
+                    ],
+                }
+            ],
+            temperature=self.llm.temperature
+        )
+
+        curriculum = curr.choices[0].message.content
         print(f"\033[31m****Curriculum Agent ai message****\n{curriculum}\033[0m")
         try:
             response = self.parse_ai_message(curriculum)
@@ -394,7 +418,9 @@ class CurriculumAgent:
         )
         #response = self.llm(messages).content
 
-        response = self.llm2.chat.completions.create(
+        print(f"imagebase64 is {self.image_base64}")
+
+        res = self.llm2.chat.completions.create(
             model=self.llm.model_name,
             messages=[
                 {
@@ -417,6 +443,8 @@ class CurriculumAgent:
             ],
             temperature=self.llm.temperature
         )
+
+        response = res.choices[0].message.content
 
 
         print(f"\033[31m****Curriculum Agent task decomposition****\n{response}\033[0m")
@@ -500,7 +528,7 @@ class CurriculumAgent:
         ]
         #qa_response = self.qa_llm(messages).content
 
-        qa_response = self.qa_llm2.chat.completions.create(
+        qa_res = self.qa_llm2.chat.completions.create(
             model=self.qa_llm.model_name,
             messages=[
                 {
@@ -523,6 +551,8 @@ class CurriculumAgent:
             ],
             temperature=self.qa_llm.temperature
         )
+
+        qa_response = qa_res.choices[0].message.content
 
 
         try:
@@ -560,7 +590,7 @@ class CurriculumAgent:
         print(f"\033[35mCurriculum Agent Question: {question}\033[0m")
         #qa_answer = self.qa_llm(messages).content
 
-        qa_answer = self.qa_llm2.chat.completions.create(
+        qa_ans = self.qa_llm2.chat.completions.create(
             model=self.qa_llm.model_name,
             messages=[
                 {
@@ -583,5 +613,6 @@ class CurriculumAgent:
             ],
             temperature=self.qa_llm.temperature
         )
+        qa_answer = qa_ans.choices[0].message.content
         print(f"\033[31mCurriculum Agent {qa_answer}\033[0m")
         return qa_answer

@@ -46,7 +46,7 @@ You must follow the following criteria:
   Good example:
     Question: What are the blocks that I can find in the sparse jungle?
     Concept: sparse jungle
-4) Do not ask questions about building tasks (such as building a shelter) since they are too hard for me to do.
+4) Do ask me lots of questions about building tasks (such as building a shelter) since they are very interesting to me.
 
 Let's say your current biome is sparse jungle. You can ask questions like:
 Question: What are the items that I can find in the sparse jungle?

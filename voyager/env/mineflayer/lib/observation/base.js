@@ -38,6 +38,8 @@ function inject(bot, obs_list) {
         bot.event("observe");
         const result = bot.cumulativeObs;
         bot.cumulativeObs = [];
+        console.log("CUMULATIVE OBS:")
+        console.log(result)
         return JSON.stringify(result);
     };
 }
