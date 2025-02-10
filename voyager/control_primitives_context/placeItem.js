@@ -21,6 +21,8 @@ async function placeItem(bot, name, position) {
         }
     }
     // You must first go to the block position you want to place
+    movements.blocksCantBreak.add(mcData.blocksByName["spruce_planks"].id)
+    bot.pathfinder.setMovements(movements)
     await bot.pathfinder.goto(new GoalPlaceBlock(position, bot.world, {}));
     // You must equip the item right before calling placeBlock
     await bot.equip(item, "hand");

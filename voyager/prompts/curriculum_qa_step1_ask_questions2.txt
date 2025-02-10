@@ -53,9 +53,9 @@ Let's say you see a creeper nearby, and you have not defeated a creeper before. 
 Question: How to defeat the creeper?
 Concept: creeper
 
-Let's say your last completed task is "Craft a wooden pickaxe". You can ask a question like:
-Question: What are the suggested tasks that I can do after crafting a wooden pickaxe?
-Concept: wooden pickaxe
+Let's say your last completed task is "Build a wooden pole, 3 blocks high". You can ask a question like:
+Question: What more advanced structures can I create given that I know how to create a pole?
+Concept: Wooden pole
 
 Here are some more question and concept examples:
 Question: What are the ores that I can find in the sparse jungle?

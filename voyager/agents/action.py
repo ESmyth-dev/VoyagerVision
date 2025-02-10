@@ -83,7 +83,7 @@ class ActionAgent:
             return f"Chests: None\n\n"
 
     def render_system_message(self, skills=[]):
-        system_template = load_prompt("action_template")
+        system_template = load_prompt("action_template2")
         # FIXME: Hardcoded control_primitives
         base_skills = [
             "exploreUntil",

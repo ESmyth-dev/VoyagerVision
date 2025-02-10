@@ -29,26 +29,28 @@ Ensure the response can be parsed by Python `json.loads`, e.g.: no trailing comm
 Here are some examples:
 INPUT:
 Inventory (2/36): {'oak_log':2, 'spruce_log':2}
+Screenshot which contains an open grassy field, with a wooden pole 3 blocks high present in view.
 
-Task: Mine 3 wood logs
+Task: Create wooden pole, 3 blocks high
 
 RESPONSE:
 {
-    "reasoning": "You need to mine 3 wood logs. You have 2 oak logs and 2 spruce logs, which add up to 4 wood logs.",
+    "reasoning": "You need to create a wooden pole 3 blocks high, I can see from the screenshot you have done this successfully.",
     "success": true,
     "critique": ""
 }
 
 INPUT:
 Inventory (3/36): {'crafting_table': 1, 'spruce_planks': 6, 'stick': 4}
+A screenshot containing a rocky terrain, with no man made structures in sight
 
-Task: Craft a wooden pickaxe
+Task: Create wooden pole, 3 blocks high
 
 RESPONSE:
 {
-    "reasoning": "You have enough materials to craft a wooden pickaxe, but you didn't craft it.",
+    "reasoning": "There is no wooden pole present in your view, either you did not create it or you did not position yourself in view of it afterwards.",
     "success": false,
-    "critique": "Craft a wooden pickaxe with a crafting table using 3 spruce planks and 2 sticks."
+    "critique": "Create a wooden pole which is 3 blocks high and then position yourself in such a way that it may be observed afterwards."
 }
 
 INPUT:
@@ -128,4 +130,4 @@ RESPONSE
     "critique": "Deposit more useless items such as copper_block, diorite, granite, cobbled_deepslate, feather, and leather to meet the requirement of having only 20 occupied slots in your inventory."
 }
 
-Just to be clear DO NOT under any circumstances include any text or symbols outside of the braces.
+Your response MUST NOT be formatted in markdown or for any other reason inlude text on the outside of the curly braces, "{" should be the first character of your response and ")" should be the last.

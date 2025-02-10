@@ -3,6 +3,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mineflayer = require("mineflayer");
 
+
+const minecraftData = require('minecraft-data')
+// or for es6: import minecraftData from 'minecraft-data';
+
+const mcData = minecraftData('1.19')
+const { pathfinder, Movements } = require('mineflayer-pathfinder');
 const skills = require("./lib/skillLoader");
 const { initCounter, getNextTime } = require("./lib/utils");
 const obs = require("./lib/observation/base");
@@ -60,10 +66,12 @@ app.post("/start", (req, res) => {
         bot.dismount();
     });
 
+    bot.loadPlugin(pathfinder)
 
     bot.once("spawn", async () => {
         await bot.waitForChunksToLoad()
 
+        const movements = new Movements(bot);
         bot.removeListener("error", onConnectionFailed);
         let itemTicks = 1;
         if (req.body.reset === "hard") {
@@ -149,15 +157,17 @@ app.post("/start", (req, res) => {
 
             // Convert bot's rotation to camera coordinates
             const lookDirection = new THREE.Vector3(
-                -Math.cos(pitch) * Math.sin(yaw), // Flip X
-                   -Math.sin(pitch),                // Y stays flipped (Minecraft uses positive downward)
-                -Math.cos(pitch) * Math.cos(yaw) // Flip Z
+                -Math.sin(yaw) * Math.cos(pitch), // Flip X
+                   Math.sin(pitch),                // Y stays flipped (Minecraft uses positive downward)
+                -Math.cos(yaw) * Math.cos(pitch) // Flip Z
             );
+        await camera.takePicture(lookDirection, `bot_pov`)
+
         await camera.takePicture(lookDirection, `bot_pov`)
 
             const imageBuffer = fs.readFileSync("./screenshots/bot_pov.jpg");
         const imageBase64 = imageBuffer.toString('base64');
-        fs.unlinkSync("./screenshots/bot_pov.jpg")
+        //fs.unlinkSync("./screenshots/bot_pov.jpg")
 
         let json_observation = JSON.parse(curr_observation);
 
@@ -207,15 +217,15 @@ app.post("/step", async (req, res) => {
 
             // Convert bot's rotation to camera coordinates
             const lookDirection = new THREE.Vector3(
-                -Math.cos(pitch) * Math.sin(yaw), // Flip X
-                   -Math.sin(pitch),                // Y stays flipped (Minecraft uses positive downward)
-                -Math.cos(pitch) * Math.cos(yaw) // Flip Z
+                -Math.sin(yaw) * Math.cos(pitch), // Flip X
+                   Math.sin(pitch),                // Y stays flipped (Minecraft uses positive downward)
+                -Math.cos(yaw) * Math.cos(pitch) // Flip Z
             );
         await camera.takePicture(lookDirection, `bot_pov`)
 
             const imageBuffer = fs.readFileSync("./screenshots/bot_pov.jpg");
         const imageBase64 = imageBuffer.toString('base64');
-        fs.unlinkSync("./screenshots/bot_pov.jpg")
+        //fs.unlinkSync("./screenshots/bot_pov.jpg")
 
 
 
@@ -278,6 +288,8 @@ app.post("/step", async (req, res) => {
 
     // Set up pathfinder
     const movements = new Movements(bot, mcData);
+    movements.blocksToAvoid.add(mcData.blocksByName["spruce_planks"].id)
+    movements.blocksCantBreak.add(mcData.blocksByName["spruce_planks"].id)
     bot.pathfinder.setMovements(movements);
 
     bot.globalTickCounter = 0;
@@ -326,16 +338,16 @@ app.post("/step", async (req, res) => {
             const pitch = bot.entity.pitch; // Vertical rotation (radians)
 
             // Convert bot's rotation to camera coordinates
-            const lookDirection = new THREE.Vector3(
-                -Math.cos(pitch) * Math.sin(yaw), // Flip X
-                   -Math.sin(pitch),                // Y stays flipped (Minecraft uses positive downward)
-                -Math.cos(pitch) * Math.cos(yaw) // Flip Z
+           const lookDirection = new THREE.Vector3(
+                -Math.sin(yaw) * Math.cos(pitch), // Flip X
+                   Math.sin(pitch),                // Y stays flipped (Minecraft uses positive downward)
+                -Math.cos(yaw) * Math.cos(pitch) // Flip Z
             );
         await camera.takePicture(lookDirection, `bot_pov`)
 
             const imageBuffer = fs.readFileSync("./screenshots/bot_pov.jpg");
         const imageBase64 = imageBuffer.toString('base64');
-        fs.unlinkSync("./screenshots/bot_pov.jpg")
+        //fs.unlinkSync("./screenshots/bot_pov.jpg")
 
 
         let json_observation = JSON.parse(curr_observation);

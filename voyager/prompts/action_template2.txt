@@ -45,7 +45,11 @@ Code:
     9) Do not write infinite loops or recursive functions.
     10) Do not use `bot.on` or `bot.once` to register event listeners. You definitely do not need them.
     11) Name your function in a meaningful way (can infer the task from the name).
-    12) If you complete a building task, it is imperative that you position yourself a reasonable distance away after completion, so that I may assess your work. Do not forget to orient the head towards the object, otherwise it cannot be seen.
+    12) You must manually complete the path finding steps when building and ensure you do not form a path through your building as you are creating it, as this will result in you destroying it as you go.
+    13) If you complete a building task, it is imperative that you position yourself at least 4 blocks away, it may also be necessary to elevate yourself on a small pole to get a better view, so that I may assess your work. Do not forget to orient the head towards the object, otherwise it cannot be seen.
+    14) Additionally, consider the angle from which you are viewing your construction e.g. it is not possible to verify a wall if you look at it from a side on view, as it will just look like a pole.
+    15) Ensure to position yourself in an open flat area before beginning a building task.
+    16) Never attempt to build underwater, you will drown in the process.
 
 You should only respond in the format as described below:
 RESPONSE FORMAT:

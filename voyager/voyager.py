@@ -1,6 +1,8 @@
 import copy
 import json
 import os
+import datetime
+import sys
 import time
 from typing import Dict
 
@@ -15,7 +17,7 @@ from .agents import SkillManager
 from ollama import chat
 
 
-model = "gpt-4o"
+model = "chatgpt-4o-latest"
 model2 = "gpt-4o-mini"
 model3 = "llama3.2-vision"
 
@@ -25,6 +27,7 @@ class Voyager:
     def __init__(
             self,
             mc_port: int = None,
+            log_to_file: bool = False,
             azure_login: Dict[str, str] = None,
             server_port: int = 3000,
             openai_api_key: str = None,
@@ -107,6 +110,14 @@ class Voyager:
         :param skill_library_dir: skill library dir
         :param resume: whether to resume from checkpoint
         """
+        if log_to_file:
+            log_file = open('./logs/voyager/{date:%Y%m%d-%H%M%S}voyager.log'.format(date=datetime.datetime.now()), 'a', buffering=1)
+            sys.stdout = log_file
+            sys.stderr = log_file
+
+
+
+
         # init env
         self.env = VoyagerEnv(
             mc_port=mc_port,
@@ -170,6 +181,7 @@ class Voyager:
         self.conversations = []
         self.last_events = None
         self.image_base64 = ""
+        print(resume)
 
     def reset(self, task, context="", reset_env=True):
         self.action_agent_rollout_num_iter = 0
