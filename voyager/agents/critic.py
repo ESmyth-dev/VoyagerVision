@@ -3,6 +3,7 @@ from voyager.utils.json_utils import fix_and_parse_json
 from langchain_openai import ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
 from openai import OpenAI
+from openai import AzureOpenAI
 
 import os
 
@@ -14,15 +15,20 @@ class CriticAgent:
         request_timout=120,
         mode="auto",
     ):
-        self.llm = ChatOpenAI(
-            model_name=model_name,
-            temperature=temperature,
-            request_timeout=request_timout,
-        )
+        self.model_name = model_name
+        self.temperature = temperature
+        self.request_timout = request_timout
+        # self.llm = ChatOpenAI(
+        #     model_name=model_name,
+        #     temperature=temperature,
+        #     request_timeout=request_timout,
+        # )
 
-        self.llm2 = OpenAI(
-            api_key=os.getenv('openai_api_key'),
-        )
+        self.llm2 = AzureOpenAI(
+                api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+                api_version="2024-08-01-preview",
+                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+)
         assert mode in ["auto", "manual"]
         self.mode = mode
         self.image_base64 = ""
@@ -109,7 +115,7 @@ class CriticAgent:
         #critic = self.llm(messages).content
 
         crit = self.llm2.chat.completions.create(
-            model=self.llm.model_name,
+            model=self.model_name,
             messages=[
                 {
                     "role": "user",
@@ -129,7 +135,7 @@ class CriticAgent:
                     ],
                 }
             ],
-            temperature=self.llm.temperature
+            temperature=self.temperature
         )
 
         critic = crit.choices[0].message.content

@@ -8,6 +8,7 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import SystemMessagePromptTemplate
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 from openai import OpenAI
+from openai import AzureOpenAI
 from voyager.prompts import load_prompt
 from voyager.control_primitives_context import load_control_primitives_context
 
@@ -40,10 +41,11 @@ class ActionAgent:
             #     request_timeout=request_timout,
             # )
 
-            self.llm2 = OpenAI(
-                api_key=os.getenv('openai_api_key'),
-
-            )
+            self.llm2 = AzureOpenAI(
+                api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+                api_version="2024-08-01-preview",
+                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+)
 
         self.llm2_temp = temperature
 

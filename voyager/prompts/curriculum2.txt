@@ -31,7 +31,8 @@ You must follow the following criteria:
 4) The next task should not be too hard since I may not have completed enough very basic structures to be able to attempt it.
 5) The next task should be novel and interesting. I should build something which is a small step forward from what I have built previously. I should not be doing the same thing over and over again.
 6) Only repeat tasks if necessary.
-7) Feel free to spawn the materials you need into your inventory for any given build if necessary.
+7) You should ensure I always have at least 16 blocks of dirt in my inventory before a building task to be used as scaffolding, otherwise I may be unable to complete the build.
+8) If you need a certain amount of blocks i.e. 11 logs and already have 4 the tasks should still be gather 11 logs as the logs in your inventory will be accounted for.
 
 You should only respond in the format as described below:
 RESPONSE FORMAT:

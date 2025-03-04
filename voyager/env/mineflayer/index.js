@@ -32,6 +32,49 @@ const { EventEmitter } = require('events')
 
 let bot = null;
 
+var currentdate = new Date();
+var month = currentdate.getMonth() + 1
+var month_string;
+if (month < 10){
+    month_string=`0${month}`
+} else{
+    month_string = `${month}`
+}
+
+var minute = currentdate.getMinutes()
+var minute_string;
+if (minute < 10){
+    minute_string=`0${minute}`
+} else{
+    minute_string = `${minute}`
+}
+
+var date = currentdate.getDate()
+var date_string;
+if (date < 10){
+    date_string=`0${date}`
+} else{
+    date_string = `${date}`
+}
+
+var hour = currentdate.getHours()
+var hour_string;
+if (hour < 10){
+    hour_string=`0${hour}`
+} else{
+    hour_string = `${hour}`
+}
+
+var second = currentdate.getSeconds()
+var second_string;
+if (second < 10){
+    second_string=`0${second}`
+} else{
+    second_string = `${second}`
+}
+
+var datetime =`${currentdate.getFullYear()}${month_string}${date_string}-${hour_string}${minute_string}${second_string}`;
+
 
 const app = express();
 
@@ -70,8 +113,6 @@ app.post("/start", (req, res) => {
 
     bot.once("spawn", async () => {
         await bot.waitForChunksToLoad()
-
-        const movements = new Movements(bot);
         bot.removeListener("error", onConnectionFailed);
         let itemTicks = 1;
         if (req.body.reset === "hard") {
@@ -128,8 +169,10 @@ app.post("/start", (req, res) => {
         bot.loadPlugin(pvp);
         // bot.loadPlugin(minecraftHawkEye);
 
-        bot.collectBlock.movements.digCost = 0;
+        bot.collectBlock.movements.digCost = 0
         bot.collectBlock.movements.placeCost = 0;
+        bot.collectBlock.movements.blocksToAvoid.add(mcData.blocksByName["spruce_planks"].id)
+        bot.collectBlock.movements.blocksCantBreak.add(mcData.blocksByName["spruce_planks"].id)
 
         obs.inject(bot, [
             OnChat,
@@ -161,15 +204,23 @@ app.post("/start", (req, res) => {
                    Math.sin(pitch),                // Y stays flipped (Minecraft uses positive downward)
                 -Math.cos(yaw) * Math.cos(pitch) // Flip Z
             );
-        await camera.takePicture(lookDirection, `bot_pov`)
+        await camera.takePicture(lookDirection, `${datetime}bot_pov`)
 
-        await camera.takePicture(lookDirection, `bot_pov`)
+        await camera.takePicture(lookDirection, `${datetime}bot_pov`)
 
-            const imageBuffer = fs.readFileSync("./screenshots/bot_pov.jpg");
+
+            const imageBuffer = fs.readFileSync(`./screenshots/${datetime}bot_pov.jpg`);
         const imageBase64 = imageBuffer.toString('base64');
         //fs.unlinkSync("./screenshots/bot_pov.jpg")
 
         let json_observation = JSON.parse(curr_observation);
+
+        let blocksPlaced = 0;
+
+        bot.on('blockPlaced', (block) => {
+          blocksPlaced++;
+          console.log(`Block placed at ${block.position}. Total blocks placed: ${blocksPlaced}`);
+        });
 
             json_observation[0][1]["image"] = imageBase64;
 
@@ -221,9 +272,9 @@ app.post("/step", async (req, res) => {
                    Math.sin(pitch),                // Y stays flipped (Minecraft uses positive downward)
                 -Math.cos(yaw) * Math.cos(pitch) // Flip Z
             );
-        await camera.takePicture(lookDirection, `bot_pov`)
+        await camera.takePicture(lookDirection, `${datetime}bot_pov`)
 
-            const imageBuffer = fs.readFileSync("./screenshots/bot_pov.jpg");
+            const imageBuffer = fs.readFileSync(`./screenshots/${datetime}bot_pov.jpg`);
         const imageBase64 = imageBuffer.toString('base64');
         //fs.unlinkSync("./screenshots/bot_pov.jpg")
 
@@ -290,6 +341,15 @@ app.post("/step", async (req, res) => {
     const movements = new Movements(bot, mcData);
     movements.blocksToAvoid.add(mcData.blocksByName["spruce_planks"].id)
     movements.blocksCantBreak.add(mcData.blocksByName["spruce_planks"].id)
+    // movements.blocksCantBreak.add(mcData.blocksByName["oak_planks"].id)
+    // movements.blocksToAvoid.add(mcData.blocksByName["oak_planks"].id)
+    // movements.blocksCantBreak.add(mcData.blocksByName["birch_planks"].id)
+    // movements.blocksToAvoid.add(mcData.blocksByName["birch_planks"].id)
+    // movements.blocksCantBreak.add(mcData.blocksByName["jungle_planks"].id)
+    // movements.blocksToAvoid.add(mcData.blocksByName["jungle_planks"].id)
+    // movements.blocksCantBreak.add(mcData.blocksByName["spruce_planks"].id)
+    // movements.blocksToAvoid.add(mcData.blocksByName["spruce_planks"].id)
+
     bot.pathfinder.setMovements(movements);
 
     bot.globalTickCounter = 0;
@@ -343,9 +403,9 @@ app.post("/step", async (req, res) => {
                    Math.sin(pitch),                // Y stays flipped (Minecraft uses positive downward)
                 -Math.cos(yaw) * Math.cos(pitch) // Flip Z
             );
-        await camera.takePicture(lookDirection, `bot_pov`)
+        await camera.takePicture(lookDirection, `${datetime}bot_pov`)
 
-            const imageBuffer = fs.readFileSync("./screenshots/bot_pov.jpg");
+            const imageBuffer = fs.readFileSync(`./screenshots/${datetime}bot_pov.jpg`);
         const imageBase64 = imageBuffer.toString('base64');
         //fs.unlinkSync("./screenshots/bot_pov.jpg")
 

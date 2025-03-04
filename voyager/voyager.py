@@ -17,7 +17,7 @@ from .agents import SkillManager
 from ollama import chat
 
 
-model = "chatgpt-4o-latest"
+model = "gpt-4o"
 model2 = "gpt-4o-mini"
 model3 = "llama3.2-vision"
 
@@ -260,10 +260,10 @@ class Voyager:
                                 "type": "text",
                                 "text": self.messages[1].content
                             },
-                            {
-                                "type": "image_url",
-                                "image_url": {"url": f"data:image/jpeg;base64,{self.image_base64}"},
-                            },
+                            # {
+                            #     "type": "image_url",
+                            #     "image_url": {"url": f"data:image/jpeg;base64,{self.image_base64}"},
+                            # },
                         ],
                     }
                 ],

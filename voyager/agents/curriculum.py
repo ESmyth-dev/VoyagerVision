@@ -13,6 +13,7 @@ from langchain.schema import HumanMessage, SystemMessage
 from langchain_chroma import Chroma
 
 from openai import OpenAI
+from openai import AzureOpenAI
 
 class CurriculumAgent:
     def __init__(
@@ -28,23 +29,32 @@ class CurriculumAgent:
         warm_up=None,
         core_inventory_items: str | None = None,
     ):
-        self.llm = ChatOpenAI(
-            model_name=model_name,
-            temperature=temperature,
-            request_timeout=request_timout,
+        self.model_name = model_name
+        self.temperature = temperature
+        self.qa_model_name = qa_model_name
+        self.qa_temperature = qa_temperature
+        self.request_timout = request_timout
+        # self.llm = ChatOpenAI(
+        #     model_name=model_name,
+        #     temperature=temperature,
+        #     request_timeout=request_timout,
+        # )
+        self.llm2 = AzureOpenAI(
+                api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+                api_version="2024-08-01-preview",
+                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
         )
-        self.llm2 = OpenAI(
-            api_key=os.getenv('openai_api_key'),
 
-        )
-        self.qa_llm = ChatOpenAI(
-            model_name=qa_model_name,
-            temperature=qa_temperature,
-            request_timeout=request_timout,
-        )
+        # self.qa_llm = ChatOpenAI(
+        #     model_name=qa_model_name,
+        #     temperature=qa_temperature,
+        #     request_timeout=request_timout,
+        # )
 
-        self.qa_llm2 = OpenAI(
-            api_key=os.getenv('openai_api_key'),
+        self.qa_llm2 = AzureOpenAI(
+                api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+                api_version="2024-08-01-preview",
+                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
 
         )
 
@@ -308,7 +318,7 @@ class CurriculumAgent:
         if max_retries == 0:
             raise RuntimeError("Max retries reached, failed to propose ai task.")
         curr = self.llm2.chat.completions.create(
-            model=self.llm.model_name,
+            model=self.model_name,
             messages=[
                 {
                     "role": "user",
@@ -328,7 +338,7 @@ class CurriculumAgent:
                     ],
                 }
             ],
-            temperature=self.llm.temperature
+            temperature=self.temperature
         )
 
         curriculum = curr.choices[0].message.content
@@ -421,7 +431,7 @@ class CurriculumAgent:
         print(f"imagebase64 is {self.image_base64}")
 
         res = self.llm2.chat.completions.create(
-            model=self.llm.model_name,
+            model=self.model_name,
             messages=[
                 {
                     "role": "user",
@@ -441,7 +451,7 @@ class CurriculumAgent:
                     ],
                 }
             ],
-            temperature=self.llm.temperature
+            temperature=self.temperature
         )
 
         response = res.choices[0].message.content
@@ -529,7 +539,7 @@ class CurriculumAgent:
         #qa_response = self.qa_llm(messages).content
 
         qa_res = self.qa_llm2.chat.completions.create(
-            model=self.qa_llm.model_name,
+            model=self.model_name,
             messages=[
                 {
                     "role": "user",
@@ -549,7 +559,7 @@ class CurriculumAgent:
                     ],
                 }
             ],
-            temperature=self.qa_llm.temperature
+            temperature=self.temperature
         )
 
         qa_response = qa_res.choices[0].message.content
@@ -591,7 +601,7 @@ class CurriculumAgent:
         #qa_answer = self.qa_llm(messages).content
 
         qa_ans = self.qa_llm2.chat.completions.create(
-            model=self.qa_llm.model_name,
+            model=self.model_name,
             messages=[
                 {
                     "role": "user",
@@ -611,7 +621,7 @@ class CurriculumAgent:
                     ],
                 }
             ],
-            temperature=self.qa_llm.temperature
+            temperature=self.temperature
         )
         qa_answer = qa_ans.choices[0].message.content
         print(f"\033[31mCurriculum Agent {qa_answer}\033[0m")
