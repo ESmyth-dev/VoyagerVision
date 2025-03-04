@@ -156,7 +156,7 @@ class CurriculumAgent:
         return len(self.completed_tasks)
 
     def render_system_message(self):
-        system_message = SystemMessage(content=load_prompt("curriculum2"))
+        system_message = SystemMessage(content=load_prompt("curriculum"))
         assert isinstance(system_message, SystemMessage)
         return system_message
 
@@ -511,7 +511,7 @@ class CurriculumAgent:
         return context
 
     def render_system_message_qa_step1_ask_questions(self):
-        return SystemMessage(content=load_prompt("curriculum_qa_step1_ask_questions2"))
+        return SystemMessage(content=load_prompt("curriculum_qa_step1_ask_questions"))
 
     def render_human_message_qa_step1_ask_questions(self, *, events, chest_observation):
         observation = self.render_observation(

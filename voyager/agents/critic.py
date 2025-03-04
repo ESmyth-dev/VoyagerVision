@@ -34,7 +34,7 @@ class CriticAgent:
         self.image_base64 = ""
 
     def render_system_message(self):
-        system_message = SystemMessage(content=load_prompt("critic2"))
+        system_message = SystemMessage(content=load_prompt("critic"))
         return system_message
 
     def render_human_message(self, *, events, task, context, chest_observation):
