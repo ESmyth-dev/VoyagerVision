@@ -173,6 +173,16 @@ app.post("/start", (req, res) => {
         bot.collectBlock.movements.placeCost = 0;
         bot.collectBlock.movements.blocksToAvoid.add(mcData.blocksByName["spruce_planks"].id)
         bot.collectBlock.movements.blocksCantBreak.add(mcData.blocksByName["spruce_planks"].id)
+        bot.collectBlock.movements.blocksToAvoid.add(mcData.blocksByName["spruce_planks"].id)
+        bot.collectBlock.movements.blocksCantBreak.add(mcData.blocksByName["spruce_planks"].id)
+        bot.collectBlock.movements.blocksCantBreak.add(mcData.blocksByName["oak_planks"].id)
+        bot.collectBlock.movements.blocksToAvoid.add(mcData.blocksByName["oak_planks"].id)
+        bot.collectBlock.movements.blocksCantBreak.add(mcData.blocksByName["birch_planks"].id)
+        bot.collectBlock.movements.blocksToAvoid.add(mcData.blocksByName["birch_planks"].id)
+        bot.collectBlock.movements.blocksCantBreak.add(mcData.blocksByName["jungle_planks"].id)
+        bot.collectBlock.movements.blocksToAvoid.add(mcData.blocksByName["jungle_planks"].id)
+        bot.collectBlock.movements.blocksCantBreak.add(mcData.blocksByName["spruce_planks"].id)
+        bot.collectBlock.movements.blocksToAvoid.add(mcData.blocksByName["spruce_planks"].id)
 
         obs.inject(bot, [
             OnChat,
@@ -341,14 +351,14 @@ app.post("/step", async (req, res) => {
     const movements = new Movements(bot, mcData);
     movements.blocksToAvoid.add(mcData.blocksByName["spruce_planks"].id)
     movements.blocksCantBreak.add(mcData.blocksByName["spruce_planks"].id)
-    // movements.blocksCantBreak.add(mcData.blocksByName["oak_planks"].id)
-    // movements.blocksToAvoid.add(mcData.blocksByName["oak_planks"].id)
-    // movements.blocksCantBreak.add(mcData.blocksByName["birch_planks"].id)
-    // movements.blocksToAvoid.add(mcData.blocksByName["birch_planks"].id)
-    // movements.blocksCantBreak.add(mcData.blocksByName["jungle_planks"].id)
-    // movements.blocksToAvoid.add(mcData.blocksByName["jungle_planks"].id)
-    // movements.blocksCantBreak.add(mcData.blocksByName["spruce_planks"].id)
-    // movements.blocksToAvoid.add(mcData.blocksByName["spruce_planks"].id)
+    movements.blocksCantBreak.add(mcData.blocksByName["oak_planks"].id)
+    movements.blocksToAvoid.add(mcData.blocksByName["oak_planks"].id)
+    movements.blocksCantBreak.add(mcData.blocksByName["birch_planks"].id)
+    movements.blocksToAvoid.add(mcData.blocksByName["birch_planks"].id)
+    movements.blocksCantBreak.add(mcData.blocksByName["jungle_planks"].id)
+    movements.blocksToAvoid.add(mcData.blocksByName["jungle_planks"].id)
+    movements.blocksCantBreak.add(mcData.blocksByName["spruce_planks"].id)
+    movements.blocksToAvoid.add(mcData.blocksByName["spruce_planks"].id)
 
     bot.pathfinder.setMovements(movements);
 
