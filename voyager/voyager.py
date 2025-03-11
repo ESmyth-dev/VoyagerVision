@@ -33,7 +33,7 @@ class Voyager:
             openai_api_key: str = None,
             env_wait_ticks: int = 20,
             env_request_timeout: int = 600,
-            max_iterations: int = 160,
+            max_iterations: int = 30,
             reset_placed_if_failed: bool = False,
             action_agent_model_name: str = model,
             action_agent_temperature: float = 0,
@@ -347,6 +347,7 @@ class Voyager:
             print(
                 f"\033[32m****Action Agent human message****\n{self.messages[-1].content}\033[0m"
             )
+
         return self.messages, 0, done, info
 
     def rollout(self, *, task, context, reset_env=True):

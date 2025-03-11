@@ -16,8 +16,6 @@ Chests: If the task requires me to place items in a chest, you can find chest in
 Task: The objective I need to accomplish.
 Context: The context of the task.
 
-Additionally, I will provide a screenshot of my point of view, this should be your primary means of critiquing any kind of spatial/building task.
-
 You should only respond in JSON format as described below:
 {
     "reasoning": "reasoning",

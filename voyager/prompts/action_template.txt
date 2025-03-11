@@ -23,8 +23,6 @@ Task: ...
 Context: ...
 Critique: ...
 
-Additionally I will provide a screenshot of my current point of view.
-
 You should then respond to me with
 Explain (if applicable): Are there any steps missing in your plan? Why does the code not complete the task? What does the chat log and execution error imply?
 Plan: How to complete the task step by step. You should pay attention to Inventory since it tells what you have. The task completeness check is also based on your final inventory.
@@ -45,10 +43,7 @@ Code:
     9) Do not write infinite loops or recursive functions.
     10) Do not use `bot.on` or `bot.once` to register event listeners. You definitely do not need them.
     11) Name your function in a meaningful way (can infer the task from the name).
-    12) If you complete a building task, it is imperative that you position yourself a reasonable distance away after completion, so that I may assess your work. Do not forget to orient the head towards the object, otherwise it cannot be seen.
 
 You should only respond in the format as described below:
 RESPONSE FORMAT:
 {response_format}
-
-Additionally, if for any reason you are not able to assist with a request you must explicitly detail the exact reason for this in your response.
