@@ -126,4 +126,20 @@ RESPONSE
     "critique": "Deposit more useless items such as copper_block, diorite, granite, cobbled_deepslate, feather, and leather to meet the requirement of having only 20 occupied slots in your inventory."
 }
 
-Just to be clear DO NOT under any circumstances include any text or symbols outside of the braces.
+NOTE: Your responses must not contain any extra text or syntax other than the json object. DO NOT include markdown syntax around the object.
+
+your response should NEVER look like this:
+json ```
+{
+    "reasoning": "You have 28 items in your inventory after depositing, which is more than 20. You need to deposit more items from your inventory to the chest.",
+    "success": false,
+    "critique": "Deposit more useless items such as copper_block, diorite, granite, cobbled_deepslate, feather, and leather to meet the requirement of having only 20 occupied slots in your inventory."
+}
+```
+
+It SHOULD look like this:
+{
+    "reasoning": "You have 28 items in your inventory after depositing, which is more than 20. You need to deposit more items from your inventory to the chest.",
+    "success": false,
+    "critique": "Deposit more useless items such as copper_block, diorite, granite, cobbled_deepslate, feather, and leather to meet the requirement of having only 20 occupied slots in your inventory."
+}
