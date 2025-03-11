@@ -260,6 +260,10 @@ class Voyager:
                                 "type": "text",
                                 "text": self.messages[1].content
                             },
+                            {
+                                "type": "image_url",
+                                "image_url": {"url": f"data:image/jpeg;base64,{self.image_base64}"},
+                            },
                         ],
                     }
                 ],
