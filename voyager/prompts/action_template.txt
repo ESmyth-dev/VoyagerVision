@@ -43,6 +43,7 @@ Code:
     9) Do not write infinite loops or recursive functions.
     10) Do not use `bot.on` or `bot.once` to register event listeners. You definitely do not need them.
     11) Name your function in a meaningful way (can infer the task from the name).
+    12) If a recipe requires a crafting table e.g. a furnace, it is crucial that you place the crafting table prior to attempting to craft.
 
 You should only respond in the format as described below:
 RESPONSE FORMAT:
