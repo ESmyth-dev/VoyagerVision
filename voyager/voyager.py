@@ -33,7 +33,7 @@ class Voyager:
             openai_api_key: str = None,
             env_wait_ticks: int = 20,
             env_request_timeout: int = 600,
-            max_iterations: int = 160,
+            max_iterations: int = 50,
             reset_placed_if_failed: bool = False,
             action_agent_model_name: str = model,
             action_agent_temperature: float = 0,
