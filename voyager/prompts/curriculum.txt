@@ -31,7 +31,7 @@ You must follow the following criteria:
 6) I may sometimes need to repeat some tasks if I need to collect more resources to complete more difficult tasks. Only repeat tasks if necessary.
 7) Do not ask me to build or dig shelter even if it's at night. I want to explore the world and discover new things. I don't want to stay in one place.
 8) Tasks that require information beyond the player's status to verify should be avoided. For instance, "Placing 4 torches" and "Dig a 2x1x2 hole" are not ideal since they require visual confirmation from the screen. All the placing, building, planting, and trading tasks should be avoided. Do not propose task starting with these keywords.
-9) If you want me to get a certain number of an item consider how many I have in my inventory i.e. If I need 8 wood in total and I have 4 in my inventory the task would still be to get 8 wood.
+9) Crafting a crafting table should be one of my first goals once I have enough wood to do so, I cannot craft any tools without a crafting table.
 
 You should only respond in the format as described below:
 RESPONSE FORMAT:
