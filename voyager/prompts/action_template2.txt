@@ -45,10 +45,11 @@ Code:
     9) Do not write infinite loops or recursive functions.
     10) Do not use `bot.on` or `bot.once` to register event listeners. You definitely do not need them.
     11) Name your function in a meaningful way (can infer the task from the name).
-    12) If you complete a building task, it is imperative that you position yourself at least 4 blocks away, additionally you must elevate yourself two blocks off of the ground on a dirt pole, stand on this pole and then look at what you just built.
-    13) When you aim to verify a build, always ensure there are no blocks blocking your view between you and the block you are trying to look at, relocate if there are blocks in the way.
-    14) If for any reason you fail a building task, on your next attempt you should attempt to view it from a different position than any you have used before.
-    15) Ensure to position yourself in an open flat area before beginning a building task.
+    12) If a recipe requires a crafting table e.g. a furnace, it is crucial that you place the crafting table prior to attempting to craft.
+    13) If you complete a building task, it is imperative that you position yourself at least 4 blocks away, additionally you must elevate yourself two blocks off of the ground on a dirt pole, stand on this pole and then look at what you just built.
+    14) When you aim to verify a build, always ensure there are no blocks blocking your view between you and the block you are trying to look at, relocate if there are blocks in the way.
+    15) If for any reason you fail a building task, on your next attempt you should attempt to view it from a different position than any you have used before.
+    16) Ensure to position yourself in an open flat area before beginning a building task.
 
 You should only respond in the format as described below:
 RESPONSE FORMAT:
