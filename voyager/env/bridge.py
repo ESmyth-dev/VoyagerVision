@@ -120,7 +120,7 @@ class VoyagerEnv(gym.Env):
         )
         if res.status_code != 200:
             raise RuntimeError("Failed to step Minecraft server")
-        returned_data = res.json()
+            returned_data = res.json()
         self.pause()
         return json.loads(returned_data)
 
