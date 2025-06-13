@@ -32,19 +32,8 @@ class ActionAgent:
             self.chest_memory = U.load_json(f"{ckpt_dir}/action/chest_memory.json")
         else:
             self.chest_memory = {}
-        if model_name == "llama3.2-vision":
-            pass
-        else:
-            # self.llm = ChatOpenAI(
-            #     model_name=model_name,
-            #     temperature=temperature,
-            #     request_timeout=request_timout,
-            # )
-
-            self.llm2 = AzureOpenAI(
-                api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-                api_version="2024-08-01-preview",
-                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+            self.llm2 = OpenAI(
+                api_key=os.getenv("openai_api_key"),
 )
 
         self.llm2_temp = temperature

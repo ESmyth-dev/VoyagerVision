@@ -18,17 +18,10 @@ class CriticAgent:
         self.model_name = model_name
         self.temperature = temperature
         self.request_timout = request_timout
-        # self.llm = ChatOpenAI(
-        #     model_name=model_name,
-        #     temperature=temperature,
-        #     request_timeout=request_timout,
-        # )
-
-        self.llm2 = AzureOpenAI(
-                api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-                api_version="2024-08-01-preview",
-                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+        self.llm2 = OpenAI(
+                api_key=os.getenv("openai_api_key"),
 )
+
         assert mode in ["auto", "manual"]
         self.mode = mode
         self.image_base64 = ""
