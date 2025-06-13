@@ -1,7 +1,7 @@
 # Minecraft Instance Install
 To start using Voyager, you should first make sure to have an official [Minecraft](https://www.minecraft.net/) game (version 1.19) installed. 
 
-There are two ways to start a Minecraft instance for Voyager. Sometimes GPT-4 will write an infinite loop that runs forever. In this case, there'll be a request timeout. Using Azure login can automatically resume the running if there's a request timeout.
+There are two ways to start a Minecraft instance for Voyager. Sometimes GPT-4o will write an infinite loop that runs forever. In this case, there'll be a request timeout. Using Azure login can automatically resume the running if there's a request timeout.
 
 ## Option 1: Microsoft Azure Login (Recommended)
 Using this method will allow Voyager to automatically resume when there's a request timeout. This is dependent on the [minecraft-launcher-lib](https://minecraft-launcher-lib.readthedocs.io/en/stable/tutorial/microsoft_login.html#let-the-user-log-in) library.
@@ -35,7 +35,7 @@ azure_login = {
 After you install official Minecraft, you should have a Minecraft official launcher, open it, and follow the instructions here:
 1. Select the version you want to play and start the game.
 2. Select `Singleplayer` and create a new world.
-3. Set Game Mode to `Creative` and Difficulty to `Peaceful`.
+3. Set Game Mode to `Survival` and Difficulty to `Peaceful`.
 4. After the world is created, press `Esc` and select `Open to LAN`.
 5. Select `Allow cheats: ON` and press `Start LAN World`.
 6. You will see a port number in the chat log, that is your `mc-port`, use this number to instantiate Voyager later.
