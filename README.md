@@ -1,10 +1,10 @@
-# Voyager: An Open-Ended Embodied Agent with Large Language Models
+# VoyagerVision: Investigating the Role of Multi-modal Information for Open-ended Learning Systems
 <div align="center">
 
 [[Website]](https://voyager.minedojo.org/)
 [[Arxiv]](https://arxiv.org/abs/2305.16291)
 [[PDF]](https://voyager.minedojo.org/assets/documents/voyager.pdf)
-[[Tweet]](https://twitter.com/DrJimFan/status/1662115266933972993?s=20)
+ALL TODO
 
 [![Python Version](https://img.shields.io/badge/Python-3.9-blue.svg)](https://github.com/MineDojo/Voyager)
 [![GitHub license](https://img.shields.io/github/license/MineDojo/Voyager)](https://github.com/MineDojo/Voyager/blob/main/LICENSE)
@@ -13,36 +13,39 @@ ______________________________________________________________________
 
 https://github.com/MineDojo/Voyager/assets/25460983/ce29f45b-43a5-4399-8fd8-5dd105fd64f2
 
-![](images/pull.png)
+![](images/VoyagerVisionOverview.drawio.png)
 
 
 </div>
 
-We introduce Voyager, the first LLM-powered embodied lifelong learning agent
-in Minecraft that continuously explores the world, acquires diverse skills, and
-makes novel discoveries without human intervention. Voyager consists of three
-key components: 1) an automatic curriculum that maximizes exploration, 2) an
-ever-growing skill library of executable code for storing and retrieving complex
-behaviors, and 3) a new iterative prompting mechanism that incorporates environment
-feedback, execution errors, and self-verification for program improvement.
-Voyager interacts with GPT-4 via blackbox queries, which bypasses the need for
-model parameter fine-tuning. The skills developed by Voyager are temporally
-extended, interpretable, and compositional, which compounds the agent’s abilities
-rapidly and alleviates catastrophic forgetting. Empirically, Voyager shows
-strong in-context lifelong learning capability and exhibits exceptional proficiency
-in playing Minecraft. It obtains 3.3× more unique items, travels 2.3× longer
-distances, and unlocks key tech tree milestones up to 15.3× faster than prior SOTA.
-Voyager is able to utilize the learned skill library in a new Minecraft world to
-solve novel tasks from scratch, while other techniques struggle to generalize.
+Open-endedness is an active field of research in the pursuit
+of capable Artificial General Intelligence (AGI), allowing models to pur-
+sue tasks of their own choosing. Simultaneously, recent advancements in
+Large Language Models (LLMs) such as GPT-4o [9] have allowed such
+models to be capable of interpreting image inputs. Implementations such
+as OMNI-EPIC [4] have made use of such features, providing an LLM
+with pixel data of an agent’s POV to parse the environment and allow
+it to solve tasks. This paper proposes that providing these visual in-
+puts to a model gives it greater ability to interpret spatial environments,
+and as such, can increase the number of tasks it can successfully perform,
+extending its open-ended potential. To this aim, this paper proposes Voy-
+agerVision - a multi-modal model capable of creating structures within
+Minecraft using screenshots as a form of visual feedback, building on the
+foundation of Voyager. VoyagerVision was capable of creating an average
+of 2.75 unique structures within fifty iterations of the system, as Voy-
+ager was incapable of this, it is an extension in an entirely new direction.
+Additionally, in a set of building unit tests VoyagerVision was successful
+in half of all attempts in flat worlds, with most failures arising in more
+complex structures.
 
-In this repo, we provide Voyager code. This codebase is under [MIT License](LICENSE).
+In this repo, we provide VoyagerVision code. This codebase is under [MIT License](LICENSE).
 
 # Installation
-Voyager requires Python ≥ 3.9 and Node.js ≥ 16.13.0. We have tested on Ubuntu 20.04, Windows 11, and macOS. You need to follow the instructions below to install Voyager.
+VoyagerVision requires Python ≥ 3.9 and Node.js ≥ 16.13.0. We have tested on Ubuntu 20.04, Windows 11, and macOS. You need to follow the instructions below to install VoyagerVision.
 
 ## Python Install
 ```
-git clone https://github.com/MineDojo/Voyager
+git clone https://github.com/ESmyth-dev/VoyagerVision
 cd Voyager
 pip install -e .
 ```
@@ -61,20 +64,20 @@ npm install
 
 ## Minecraft Instance Install
 
-Voyager depends on Minecraft game. You need to install Minecraft game and set up a Minecraft instance.
+VoyagerVision depends on Minecraft game. You need to install Minecraft game and set up a Minecraft instance.
 
 Follow the instructions in [Minecraft Login Tutorial](installation/minecraft_instance_install.md) to set up your Minecraft Instance.
 
 ## Fabric Mods Install
 
-You need to install fabric mods to support all the features in Voyager. Remember to use the correct Fabric version of all the mods. 
+You need to install fabric mods to support all the features in VoyagerVision. Remember to use the correct Fabric version of all the mods. 
 
 Follow the instructions in [Fabric Mods Install](installation/fabric_mods_install.md) to install the mods.
 
 # Getting Started
-Voyager uses OpenAI's GPT-4 as the language model. You need to have an OpenAI API key to use Voyager. You can get one from [here](https://platform.openai.com/account/api-keys).
+VoyagerVision uses OpenAI's GPT-4o as the language model. You need to have an OpenAI API key to use VoyagerVision. You can get one from [here](https://platform.openai.com/account/api-keys).
 
-After the installation process, you can run Voyager by:
+After the installation process, you can run VoyagerVision by:
 ```python
 from voyager import Voyager
 
@@ -105,7 +108,7 @@ voyager.learn()
 
 # Resume from a checkpoint during learning
 
-If you stop the learning process and want to resume from a checkpoint later, you can instantiate Voyager by:
+If you stop the learning process and want to resume from a checkpoint later, you can instantiate VoyagerVision by:
 ```python
 from voyager import Voyager
 
@@ -117,9 +120,9 @@ voyager = Voyager(
 )
 ```
 
-# Run Voyager for a specific task with a learned skill library
+# Run VoyagerVision for a specific task with a learned skill library
 
-If you want to run Voyager for a specific task with a learned skill library, you should first pass the skill library directory to Voyager:
+If you want to run VoyagerVision for a specific task with a learned skill library, you should first pass the skill library directory to VoyagerVision:
 ```python
 from voyager import Voyager
 
@@ -160,5 +163,6 @@ If you find our work useful, please consider citing us!
   journal = {arXiv preprint arXiv: Arxiv-2305.16291}
 }
 ```
+TODO
 
-Disclaimer: This project is strictly for research purposes, and not an official product from NVIDIA.
+Disclaimer: This project is strictly for research purposes.
