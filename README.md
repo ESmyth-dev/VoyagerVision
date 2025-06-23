@@ -103,6 +103,40 @@ voyager.learn()
   3. After the world is created, press `Esc` key and press `Open to LAN`.
   4. Select `Allow cheats: ON` and press `Start LAN World`. You will see the bot join the world soon. 
 
+# Replicating unit test experiments 
+To reproduce the unit tests you should use the manual task input (which overwrites the curriculum agent) and use the following input for each unit test task(gathering the resources for the structure should be completed beforehand, which may look something like 'acquire 12 wooden planks'):
+
+## Pole 
+Task: Create a wooden plank pole, 3 blocks high on the ground.  
+Context: N/A
+
+## Wall
+Task: Create a wooden wall 4 blocks high and 4 blocks long in a flat open
+space.  
+Context: N/A
+
+## Stairs
+Task: create a wooden staircase 3 blocks high.  
+Context: The stair case should be composed of 3 adjacent pillars, one 3
+blocks high, one 2 blocks high and one 1 block high, use wooden planks.
+
+## Portal 
+Task: create a nether portal.  
+Context: The portal should be made of obsidian, the sides should be
+5 blocks tall with the base 4 blocks wide, once you have completed the
+structure light the inside with your flint and steel to form a nether portal,
+ensure no dirt scaffolding remains inside the portal or else it will not light
+correctly.
+
+## Pyramid 
+Task: create a three tier spruce plank pyramid.  
+Context: Begin with a 6x6 platform on the ground, on top of this platform
+centred on its middle 4x4 blocks add a 4x4 platform, finally on top of this
+4x4 platform in its middle 2x2 blocks add 2x2 platform.
+
+# Replicating other experiments
+To replicate the other experiment simply go to the branch corresponding to the build of VoyagerVision you wish to use and run as normal.
+
 # Resume from a checkpoint during learning
 
 If you stop the learning process and want to resume from a checkpoint later, you can instantiate VoyagerVision by:
