@@ -10,9 +10,6 @@ ALL TODO
 [![GitHub license](https://img.shields.io/github/license/MineDojo/Voyager)](https://github.com/MineDojo/Voyager/blob/main/LICENSE)
 ______________________________________________________________________
 
-
-https://github.com/MineDojo/Voyager/assets/25460983/ce29f45b-43a5-4399-8fd8-5dd105fd64f2
-
 ![](images/VoyagerVisionOverview.drawio.png)
 
 
